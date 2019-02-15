@@ -6,21 +6,26 @@ import "reflect"
 type BlockchainIterator struct {
 	currentHash []byte
 	db          *blockdb
+	Final       bool
 }
 
 // Iterator ... get iterator
 func (bc *Blockchain) Iterator() *BlockchainIterator {
-	bci := &BlockchainIterator{bc.tip, bc.db}
+	bci := &BlockchainIterator{
+		currentHash: bc.tip,
+		db:          bc.db,
+		Final:       false,
+	}
 	return bci
 }
 
 // Next ... get previous block
-func (i *BlockchainIterator) Next() (*Block, bool, error) {
+func (i *BlockchainIterator) Next() (*Block, error) {
 	block, err := i.db.GetBlock(string(i.currentHash))
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
 	i.currentHash = block.PrevBlockHash
-	final := reflect.DeepEqual(i.currentHash, []byte{})
-	return block, final, nil
+	i.Final = reflect.DeepEqual(i.currentHash, []byte{})
+	return block, nil
 }

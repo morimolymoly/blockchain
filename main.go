@@ -23,11 +23,11 @@ func main() {
 
 	i := bc.Iterator()
 	for {
-		block, final, err := i.Next()
+		block, err := i.Next()
 		if err != nil {
 			panic(err)
 		}
-		if final {
+		if i.Final {
 			break
 		}
 		pow := b.NewProofOfWork(block)
