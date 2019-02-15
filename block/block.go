@@ -1,6 +1,8 @@
 package block
 
 import (
+	"bytes"
+	"encoding/gob"
 	"time"
 )
 
@@ -15,6 +17,32 @@ type Block struct {
 	Hash []byte
 	// counter of pow
 	Nonce int
+}
+
+// Serialize ... serialize block to bytes
+func (b *Block) Serialize() ([]byte, error) {
+	var result bytes.Buffer
+	encoder := gob.NewEncoder(&result)
+
+	err := encoder.Encode(b)
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Bytes(), nil
+}
+
+// DeserializeBlock ... deserialize to block
+func DeserializeBlock(d []byte) (*Block, error) {
+	var block Block
+
+	decoder := gob.NewDecoder(bytes.NewReader(d))
+	err := decoder.Decode(&block)
+	if err != nil {
+		return nil, err
+	}
+
+	return &block, nil
 }
 
 // NewBlock ... Create new block

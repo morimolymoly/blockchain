@@ -2,14 +2,20 @@ package block
 
 // Blockchain ... blockchain
 type Blockchain struct {
-	Blocks []*Block
+	tip []byte
+	db  *blockdb
 }
 
 // AddBlock ... add block to blockchain
-func (bc *Blockchain) AddBlock(data string) {
-	prevBlock := bc.Blocks[len(bc.Blocks)-1]
-	newBlock := NewBlock(data, prevBlock.Hash)
-	bc.Blocks = append(bc.Blocks, newBlock)
+func (bc *Blockchain) AddBlock(data string) error {
+	tip, err := bc.db.GetTip()
+	if err != nil {
+		return err
+	}
+	newBlock := NewBlock(data, tip)
+
+	err = bc.db.PutBlock(newBlock)
+	return err
 }
 
 // NewGenesisBlock ... generate FIRTST block in our blockchain
@@ -18,8 +24,35 @@ func NewGenesisBlock() *Block {
 }
 
 // NewBlockchain ... create blockchain with genesis block
-func NewBlockchain() *Blockchain {
-	return &Blockchain{
-		Blocks: []*Block{NewGenesisBlock()},
+func NewBlockchain() (*Blockchain, error) {
+	db, err := getNewBlockDB()
+	if err != nil {
+		return nil, err
 	}
+
+	null, err := db.CheckBlockchainIsNull()
+	if err != nil {
+		return nil, err
+	}
+
+	var tip []byte
+	if null {
+		db.CreateBlockchainBucket()
+		genesis := NewGenesisBlock()
+		err := db.PutBlock(genesis)
+		if err != nil {
+			return nil, err
+		}
+		tip = genesis.Hash
+	} else {
+		h, err := db.GetTip()
+		if err != nil {
+			return nil, err
+		}
+		tip = h
+	}
+	return &Blockchain{
+		tip: tip,
+		db:  db,
+	}, nil
 }
