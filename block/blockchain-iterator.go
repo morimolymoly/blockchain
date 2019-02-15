@@ -1,7 +1,5 @@
 package block
 
-import "reflect"
-
 // BlockchainIterator ... iterator
 type BlockchainIterator struct {
 	currentHash []byte
@@ -26,6 +24,6 @@ func (i *BlockchainIterator) Next() (*Block, error) {
 		return nil, err
 	}
 	i.currentHash = block.PrevBlockHash
-	i.Final = reflect.DeepEqual(i.currentHash, []byte{})
+	i.Final = len(block.PrevBlockHash) == 0
 	return block, nil
 }

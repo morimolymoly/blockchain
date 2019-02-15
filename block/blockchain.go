@@ -1,5 +1,7 @@
 package block
 
+import "fmt"
+
 // Blockchain ... blockchain
 type Blockchain struct {
 	tip []byte
@@ -20,6 +22,7 @@ func (bc *Blockchain) AddBlock(data string) error {
 
 // NewGenesisBlock ... generate FIRTST block in our blockchain
 func NewGenesisBlock() *Block {
+	fmt.Printf("Hmm... There is no block in blockchain!\nLet's create Genesis Block!\n")
 	return NewBlock("Genesis Block", []byte{})
 }
 

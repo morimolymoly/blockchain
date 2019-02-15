@@ -1,4 +1,7 @@
-run: clean
-	go run main.go
-clean:
-	rm -rf uoooo.db
+ARG = foo
+
+print:
+	go run main.go printchain
+
+add:
+	go run main.go addblock -data ${ARG}

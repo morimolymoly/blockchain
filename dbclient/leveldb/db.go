@@ -21,11 +21,10 @@ type LevelDB struct {
 func (d LevelDB) ExistBucket(bucket string) (bool, error) {
 	data, err := d.db.Get([]byte(bucket), nil)
 
-	if err.Error() == l.ErrNotFound.Error() {
-		return true, nil
-	}
-
 	if err != nil {
+		if err.Error() == l.ErrNotFound.Error() {
+			return true, nil
+		}
 		return true, err
 	}
 	return (data == nil), nil
