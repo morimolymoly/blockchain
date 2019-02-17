@@ -13,6 +13,10 @@ type blockdb struct {
 	db dbinterface.Database
 }
 
+func (b *blockdb) Close() error {
+	return b.db.Close()
+}
+
 func (b *blockdb) CheckBlockchainIsNull() (bool, error) {
 	return b.db.ExistBucket(blockchainBucket)
 }

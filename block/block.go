@@ -2,6 +2,7 @@ package block
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/gob"
 	"time"
 )
@@ -9,8 +10,8 @@ import (
 // Block ... block
 type Block struct {
 	// when this block is creted
-	Timestamp int64
-	Data      []byte
+	Timestamp    int64
+	Transactions []*Transaction
 	// hash of the previsous block
 	PrevBlockHash []byte
 	// header
@@ -45,11 +46,24 @@ func DeserializeBlock(d []byte) (*Block, error) {
 	return &block, nil
 }
 
+// HashTransactions ... get hash of transactions
+func (b *Block) HashTransactions() []byte {
+	var txHashes [][]byte
+	var txHash [32]byte
+
+	for _, tx := range b.Transactions {
+		txHashes = append(txHashes, tx.ID)
+	}
+	txHash = sha256.Sum256(bytes.Join(txHashes, []byte{}))
+
+	return txHash[:]
+}
+
 // NewBlock ... Create new block
-func NewBlock(data string, prevBlockHash []byte) *Block {
+func NewBlock(transactions []*Transaction, prevBlockHash []byte) *Block {
 	b := &Block{
 		Timestamp:     time.Now().Unix(),
-		Data:          []byte(data),
+		Transactions:  transactions,
 		PrevBlockHash: prevBlockHash,
 	}
 	pow := NewProofOfWork(b)

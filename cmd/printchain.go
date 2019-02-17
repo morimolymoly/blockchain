@@ -18,7 +18,7 @@ var printchainCmd = &cobra.Command{
 	Short: "print blockchain",
 	Long:  `print blockchain`,
 	Run: func(cmd *cobra.Command, args []string) {
-		bc, err := b.NewBlockchain()
+		bc, err := b.NewBlockchain("")
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -32,7 +32,6 @@ var printchainCmd = &cobra.Command{
 			pow := b.NewProofOfWork(block)
 			fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
 			fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
-			fmt.Printf("Data: %s\n", block.Data)
 			fmt.Printf("Hash: %x\n", block.Hash)
 			fmt.Println()
 			if i.Final {
