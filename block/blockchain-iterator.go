@@ -11,7 +11,7 @@ type BlockchainIterator struct {
 func (bc *Blockchain) Iterator() *BlockchainIterator {
 	bci := &BlockchainIterator{
 		currentHash: bc.tip,
-		db:          bc.db,
+		db:          bc.Db,
 		Final:       false,
 	}
 	return bci
